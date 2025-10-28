@@ -14,6 +14,8 @@ public class Password {
 
     public Password(String password) { this.password = passwordEncoder.encode(password); }
 
+    public Password() {}
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

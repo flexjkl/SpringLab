@@ -22,8 +22,6 @@ public class Initializer {
 
         Student studentInstance = new Student("fio", "def_group", "+79");
 
-        studentRepository.save(studentInstance);
-
         User student = new User(
                 null,
                 "student",
