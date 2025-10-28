@@ -1,11 +1,12 @@
 package dev.vorstu.controllers;
 
-import dev.vorstu.dto.Student;
+import dev.vorstu.entity.Student;
 import dev.vorstu.repositories.StudentRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
@@ -22,12 +23,12 @@ public class BaseController {
     }
 
     @GetMapping(value = "students/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Student getStudentById(@PathVariable("id") Long id) {
+    public Student getStudentById(Principal user, @PathVariable("id") Long id) {
         return studentsRep.findById(id).orElse(null);
     }
 
     @GetMapping(value = "students/filter", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Iterable<Student> getStudentsByGroup(@RequestPart(value = "group") String group) {
+    public Iterable<Student> getStudentsByGroup(@RequestParam(value = "group") String group) {
         return StreamSupport.stream(studentsRep.findAll().spliterator(), false)
                 .filter(student -> student.getGroup().equals(group))
                 .toList();
