@@ -8,6 +8,10 @@ public class Student {
 
     public Student() {}
 
+    public Student(Student student) {
+        this(student.id, student.fio, student.group, student.phoneNumber);
+    }
+
     public Student(Long id, String fio, String group, String phoneNumber) {
         this(fio, group, phoneNumber);
         this.id = id;
@@ -17,6 +21,11 @@ public class Student {
         this.fio = fio;
         this.group = group;
         this.phoneNumber = phoneNumber;
+    }
+
+    @Override
+    public String toString() {
+        return fio + " " + group + " " + phoneNumber + " " + id;
     }
 
     public String getFio() { return fio; }

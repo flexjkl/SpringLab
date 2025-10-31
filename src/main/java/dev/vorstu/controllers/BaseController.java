@@ -5,6 +5,7 @@ import dev.vorstu.entity.Student;
 import dev.vorstu.entity.User;
 import dev.vorstu.repositories.StudentRespository;
 import dev.vorstu.repositories.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,9 +16,8 @@ import java.security.Principal;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
-import static org.springframework.http.ResponseEntity.ok;
-
 @RestController
+@Slf4j
 @RequestMapping("api/base")
 public class BaseController {
 
@@ -31,10 +31,11 @@ public class BaseController {
     public Iterable<Student> getStudents() { return studentsRep.findAll(); }
 
     @GetMapping(value = "students/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Student> getStudentById(Principal user, @PathVariable("id") Long id) {
+    public ResponseEntity<Optional<Student>> getStudentById(Principal user, @PathVariable("id") Long id) {
         User requesting = findUserByName(user.getName());
-        if(requesting.getStudent().getId().equals(id) || requesting.getRole() == Role.ADMIN) {
-            return new ResponseEntity<>(requesting.getStudent(), HttpStatus.OK);
+        Long studentId = requesting.getStudent().getId();
+        if(studentId.equals(id) || requesting.getRole() == Role.ADMIN) {
+            return new ResponseEntity<>(studentsRep.findById(studentId), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
