@@ -1,5 +1,6 @@
 package dev.vorstu.controllers;
 
+import dev.vorstu.dto.StudentDTO;
 import dev.vorstu.entity.Student;
 import dev.vorstu.service.Service;
 import lombok.extern.slf4j.Slf4j;
@@ -23,19 +24,19 @@ public class BaseController {
     }
 
     @GetMapping(value = "students", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Iterable<Student> getStudents() { return service.getAllStudents(); }
+    public Iterable<StudentDTO> getStudents() { return service.getAllStudents(); }
 
     @GetMapping(value = "students/filter", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Iterable<Student> getStudentsByGroup(@RequestParam(value = "group") String group) {
+    public Iterable<StudentDTO> getStudentsByGroup(@RequestParam(value = "group") String group) {
         return service.getStudentsByGroup(group);
     }
 
     @PostMapping(value = "students", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Student createStudent(@RequestBody Student newStudent) { return service.addStudent(newStudent); }
+    public StudentDTO createStudent(@RequestBody Student newStudent) { return service.addStudent(newStudent); }
 
     @GetMapping(value = "students/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Student> getStudentById(Principal user, @PathVariable("id") Long id) {
-        Student student = service.getStudentById(user.getName(), id);
+    public ResponseEntity<StudentDTO> getStudentById(Principal user, @PathVariable("id") Long id) {
+        StudentDTO student = service.getStudentById(user.getName(), id);
         if(student != null) {
             return new ResponseEntity<>(student, HttpStatus.OK);
         }
@@ -43,8 +44,8 @@ public class BaseController {
     }
 
     @PutMapping(value = "students/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Student> changeStudent(Principal user, @RequestBody Student changingStudent) {
-        Student student = service.changeStudent(user.getName(), changingStudent);
+    public ResponseEntity<StudentDTO> changeStudent(Principal user, @RequestBody Student changingStudent) {
+        StudentDTO student = service.changeStudent(user.getName(), changingStudent);
         if(student != null) {
             return new ResponseEntity<>(student, HttpStatus.OK);
         }

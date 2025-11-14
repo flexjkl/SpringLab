@@ -1,5 +1,6 @@
 package dev.vorstu.service;
 
+import dev.vorstu.dto.StudentDTO;
 import dev.vorstu.entity.Role;
 import dev.vorstu.entity.Student;
 import dev.vorstu.entity.User;
@@ -21,43 +22,47 @@ public class Service {
         this.userRepository = userRepository;
     }
 
-    public Iterable<Student> getStudentsByGroup(String group) {
-        return  StreamSupport.stream(studentRespository.findAll().spliterator(), false)
+    public Iterable<StudentDTO> getStudentsByGroup(String group) {
+        return  StreamSupport.stream(StudentDTO.makeDto(studentRespository.findAll()).spliterator(), false)
                 .filter(student -> student.getGroup().equals(group))
                 .toList();
     }
 
-    public Student getStudentById(String userName, Long studentId) {
+    public StudentDTO getStudentById(String userName, Long studentId) {
         User requesting = findUserByName(userName);
 
+        StudentDTO studentDTO = StudentDTO.makeDto(studentRespository.findById(studentId).orElse(null));
+
         if(requesting.getRole() == Role.ADMIN) {
-            return studentRespository.findById(studentId).orElse(null);
+            return studentDTO;
         }
 
         Long userStudentId = requesting.getStudent().getId();
         if(userStudentId.equals(studentId)) {
-            return studentRespository.findById(userStudentId).orElse(null);
+            return studentDTO;
         }
 
         return null;
     }
 
-    public Student changeStudent(String userName, Student changingStudent) {
+    public StudentDTO changeStudent(String userName, Student changingStudent) {
         User requesting = findUserByName(userName);
 
+        StudentDTO studentDTO = StudentDTO.makeDto(updateStudent(changingStudent));
+
         if(requesting.getRole() == Role.ADMIN) {
-            return updateStudent(changingStudent);
+            return studentDTO;
         }
 
         if(requesting.getStudent().getId().equals(changingStudent.getId())) {
-            return updateStudent(changingStudent);
+            return studentDTO;
         }
 
         return null;
     }
 
-    public Iterable<Student> getAllStudents() {
-        return studentRespository.findAll();
+    public Iterable<StudentDTO> getAllStudents() {
+        return StudentDTO.makeDto(studentRespository.findAll());
     }
 
     public Long deleteStudent(Long id) {
@@ -65,9 +70,9 @@ public class Service {
         return id;
     }
 
-    public Student addStudent(Student student) {
+    public StudentDTO addStudent(Student student) {
         studentRespository.save(student);
-        return student;
+        return StudentDTO.makeDto(student);
     }
 
     private Student updateStudent(Student student) {
