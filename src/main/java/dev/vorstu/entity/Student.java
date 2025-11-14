@@ -34,19 +34,21 @@ public class Student {
 
     public String getPhoneNumber() { return  phoneNumber; }
 
+    public Long getId() {
+        return id;
+    }
+
     public void setFio(String fio) { this.fio = fio; }
 
     public void setGroup(String group) { this.group = group; }
 
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 
+    public void setId(Long id) { this.id = id; }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    public Long getId() {
-        return id;
-    }
 
     private String fio = null;
 
