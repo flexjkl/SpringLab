@@ -31,7 +31,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests()
                 .requestMatchers("/api/login/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/base/students/{id}").hasAnyAuthority(Role.STUDENT.name(), Role.ADMIN.name())
-                .requestMatchers(HttpMethod.PUT, "/api/base/students/{id}").hasAnyAuthority(Role.STUDENT.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.PUT, "/api/base/students").hasAnyAuthority(Role.STUDENT.name(), Role.ADMIN.name())
                 .requestMatchers("/api/base/students/**").hasAuthority(Role.ADMIN.name())
                 .anyRequest()
                 .authenticated()

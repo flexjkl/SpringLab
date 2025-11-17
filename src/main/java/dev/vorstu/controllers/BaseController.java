@@ -43,7 +43,7 @@ public class BaseController {
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    @PutMapping(value = "students/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "students", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StudentDTO> changeStudent(Principal user, @RequestBody Student changingStudent) {
         StudentDTO student = service.changeStudent(user.getName(), changingStudent);
         if(student != null) {

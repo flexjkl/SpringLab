@@ -56,4 +56,7 @@ public class Student {
     private String group = null;
 
     private String phoneNumber = null;
+
+    @OneToOne(mappedBy = "student")
+    private User user;
 }
