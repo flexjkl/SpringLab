@@ -27,7 +27,7 @@ public class Service {
     }
 
     public Iterable<StudentDTO> getStudentsByGroup(String group) {
-        return  StreamSupport.stream(studentRespository.findAll().spliterator(), false)
+        return  StreamSupport.stream(studentRespository.findByGroup(group).spliterator(), false)
                 .map(studentMapper::toDto)
                 .filter(student -> student.getGroup().equals(group))
                 .toList();
@@ -36,15 +36,8 @@ public class Service {
     public StudentDTO getStudentById(String userName, Long studentId) {
         User requesting = findUserByName(userName);
 
-        StudentDTO studentDTO = studentMapper.toDto(studentRespository.findById(studentId).orElse(null));
-
-        if(requesting.getRole() == Role.ADMIN) {
-            return studentDTO;
-        }
-
-        Long userStudentId = requesting.getStudent().getId();
-        if(userStudentId.equals(studentId)) {
-            return studentDTO;
+        if(requesting.getRole() == Role.ADMIN || requesting.getStudent().getId().equals(studentId)) {
+            return studentMapper.toDto(requesting.getStudent());
         }
 
         return null;
@@ -72,8 +65,7 @@ public class Service {
     }
 
     public StudentDTO addStudent(Student student) {
-        studentRespository.save(student);
-        return studentMapper.toDto(student);
+        return studentMapper.toDto(studentRespository.save(student));
     }
 
     private Student updateStudent(Student student) {
@@ -94,9 +86,6 @@ public class Service {
 
     private User findUserByName(String name) {
         log.info("USERNAME: " + name);
-        return  StreamSupport.stream(userRepository.findAll().spliterator(), false)
-                .filter(user -> user.getUsername().equals(name))
-                .findFirst()
-                .get();
+        return userRepository.findByUsername(name);
     }
 }

@@ -21,6 +21,11 @@ public class Password {
     private Long id;
     private String password;
 
+    @Override
+    public String toString() {
+        return password;
+    }
+
     @JsonIgnore
     private void setPasswordWithEncoding(String password) { this.password = passwordEncoder.encode(password); }
 }
