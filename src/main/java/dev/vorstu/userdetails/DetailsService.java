@@ -1,7 +1,6 @@
 package dev.vorstu.userdetails;
 
-import dev.vorstu.entity.User;
-import dev.vorstu.repositories.StudentRespository;
+import dev.vorstu.projections.UserProjection;
 import dev.vorstu.repositories.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,15 +22,15 @@ public class DetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        User user = userRepository.findByUsername(username);
+        UserProjection user = userRepository.findByUsername(username);
 
         if(user == null) throw new UsernameNotFoundException(username);
 
         return new Details(
                 user.getUsername(),
-                user.getPassword().toString(),
+                user.getPassword(),
                 List.of(new SimpleGrantedAuthority(user.getRole().name())),
-                user.getStudent().getId()
+                user.getStudentId()
         );
     }
 }

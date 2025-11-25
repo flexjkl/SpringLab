@@ -7,7 +7,9 @@ import dev.vorstu.entity.User;
 import dev.vorstu.mappers.StudentMapper;
 import dev.vorstu.repositories.StudentRespository;
 import dev.vorstu.repositories.UserRepository;
+import dev.vorstu.userdetails.Details;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
@@ -33,22 +35,25 @@ public class Service {
                 .toList();
     }
 
-    public StudentDTO getStudentById(String userName, Long studentId) {
-        User requesting = findUserByName(userName);
+    public StudentDTO getStudentById(Details requesting, Long studentId) {
 
-        if(requesting.getRole() == Role.ADMIN || requesting.getStudent().getId().equals(studentId)) {
-            return studentMapper.toDto(requesting.getStudent());
+        if(requesting.getAuthorities().contains(new SimpleGrantedAuthority(Role.ADMIN.toString())))
+            return studentMapper.toDto(studentRespository.findById(studentId).orElse(null));
+
+        if(requesting.getStudentId().equals(studentId)) {
+            return studentMapper.toDto(studentRespository.findById(requesting.getStudentId()).orElse(null));
         }
 
         return null;
     }
 
-    public StudentDTO changeStudent(String userName, Student changingStudent) {
-        User requesting = findUserByName(userName);
+    public StudentDTO changeStudent(Details requesting, Student changingStudent) {
 
-        if(requesting.getRole() == Role.ADMIN || requesting.getStudent().getId().equals(changingStudent.getId())) {
-            return studentMapper.toDto(updateStudent(changingStudent));
-        }
+        if(changingStudent == null || changingStudent.getId() == null)
+            throw new RuntimeException("id of changing student cannot be null");
+
+        if(requesting.getAuthorities().contains(new SimpleGrantedAuthority(Role.ADMIN.toString())) || requesting.getStudentId().equals(changingStudent.getId()))
+            return studentMapper.toDto(studentRespository.save(changingStudent));
 
         return null;
     }
@@ -68,24 +73,4 @@ public class Service {
         return studentMapper.toDto(studentRespository.save(student));
     }
 
-    private Student updateStudent(Student student) {
-        if(student.getId() == null)
-            throw new RuntimeException("id of changing student cannot be null");
-
-        Student changingStudent = studentRespository.findById(student.getId()).orElse(null);
-
-        if(changingStudent != null) {
-            changingStudent.setFio(student.getFio());
-            changingStudent.setGroup(student.getGroup());
-            changingStudent.setPhoneNumber(student.getPhoneNumber());
-            studentRespository.save(changingStudent);
-        }
-
-        return student;
-    }
-
-    private User findUserByName(String name) {
-        log.info("USERNAME: " + name);
-        return userRepository.findByUsername(name);
-    }
 }

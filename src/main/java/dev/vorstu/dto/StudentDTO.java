@@ -1,6 +1,5 @@
 package dev.vorstu.dto;
 
-import dev.vorstu.entity.Student;
 import lombok.Getter;
 import lombok.Setter;
 
