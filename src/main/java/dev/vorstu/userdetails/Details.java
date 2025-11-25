@@ -1,17 +1,19 @@
 package dev.vorstu.userdetails;
 
-import dev.vorstu.entity.Student;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
 
-
+@Getter @Setter
 public class Details extends User {
-    private Student userStudent;
 
-    public Details(String username, String password, Collection<? extends GrantedAuthority> authorities, Student userStudent) {
+    private Long studentId;
+
+    public Details(String username, String password, Collection<? extends GrantedAuthority> authorities, Long studentId) {
         super(username, password, authorities);
-        this.userStudent = userStudent;
+        this.studentId = studentId;
     }
 }

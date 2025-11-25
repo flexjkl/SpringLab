@@ -15,21 +15,23 @@ import java.util.List;
 public class DetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final StudentRespository studentRespository;
 
-    public DetailsService(UserRepository userRepository, StudentRespository studentRespository) {
+    public DetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.studentRespository = studentRespository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
         User user = userRepository.findByUsername(username);
+
+        if(user == null) throw new UsernameNotFoundException(username);
+
         return new Details(
                 user.getUsername(),
                 user.getPassword().toString(),
                 List.of(new SimpleGrantedAuthority(user.getRole().name())),
-                studentRespository.findById(user.getId()).orElse(null)
+                user.getStudent().getId()
         );
     }
 }

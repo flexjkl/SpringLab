@@ -15,10 +15,10 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 
 @Configuration
@@ -26,7 +26,7 @@ import java.io.IOException;
 @Slf4j
 public class SecurityConfig {
 
-    private DetailsService detailsService;
+    private final DetailsService detailsService;
 
     public SecurityConfig(DetailsService detailsService) {
         this.detailsService = detailsService;
@@ -58,11 +58,8 @@ public class SecurityConfig {
 
     @Autowired
     public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(detailsService);
+        auth.userDetailsService(detailsService).passwordEncoder(new BCryptPasswordEncoder());
     }
-
-    @Autowired
-    private DataSource dataSource;
 }
 
 
